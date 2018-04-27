@@ -42,7 +42,7 @@ void update(int a,int b,int v,int ix=1,int l=0,int r=N){
 }
 
 int query(int a,int b,int ix=1,int l=0,int r=N){
-  push(ix);
+  if(r-l>1) push(ix);
 
   if(b<=l || a>=r) return 0;//return identity here
   if(a<=l && r<=b){

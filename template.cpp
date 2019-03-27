@@ -10,6 +10,7 @@
 #include <map>
 #include <queue>
 #include <stack>
+#include <climits>
 #include <cmath>
 #include <cstring>
 #include <unordered_set>

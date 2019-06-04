@@ -47,16 +47,16 @@ struct segtree{
 
   // Updates interval [a,b)
   void range_update(int a,int b,int v,int ix,int l,int r){
+    push(ix,r-l==1);
     if(b<=l || a>=r) return;
 
     if(a<=l && r<=b){
       //Update here
-      push(ix,r-l==1);
 
+      push(ix,r-l==1);
       return;
     }
 
-    push(ix,r-l==1);
     range_update(a,b,v,2*ix,l,(l+r)/2);
     range_update(a,b,v,2*ix+1,(l+r)/2,r);
     combine(ix);

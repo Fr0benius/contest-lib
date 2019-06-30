@@ -21,7 +21,7 @@ struct maxflow{
   void add(int x,int y,ll cap){
     edges.push_back({x,y,cap});
     g[x].push_back(edges.size()-1);
-    edges.push_back({y,x,cap,cap});
+    edges.push_back({y,x,0,0});
     g[y].push_back(edges.size()-1);
   }
 

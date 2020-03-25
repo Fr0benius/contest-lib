@@ -1,37 +1,46 @@
 const int MAXN=100100;
 
 int N;
-vector<int> g[MAXN];
-vector<int> eul;
-int lab[MAXN];
-int inv[MAXN*2];
-int sp[MAXN*2][20];
-int par[MAXN][20];
+vector<int> g[MAXN]; // The graph is assumed to have vertices 1,...,N.
 
-void dfs1(int v,int p){
-  if(lab[v]==-1) lab[v]=eul.size(),inv[lab[v]]=v;
-  par[v][0]=p;
-  
-  eul.pb(lab[v]);
+// Vertices are labeled in preorder (enter times)
+vector<int> lab, invlab; // vertex-to-label, label-to-vertex
+vector<int> seq; // Euler tour of the tree, using vertex labels.
+vector<int> lab_to_ix; // Vertex label to index of first occurrence in the tour
 
-  for(int w:g[v]){
-    if(w==p) continue;
-    dfs1(w,v);
-    eul.pb(lab[v]);
+// Sparse table corresponding to seq
+sparse<int> sp;
+
+vector<int> dep; // Depth of each node. Used to calculate distance.
+int par[MAXN][32];
+
+
+void init_dfs(int v, int p) {
+  int cur = invlab.size();
+  dep[v] = dep[p]+1;
+  lab[v] = cur;
+  invlab.pb(v);
+  lab_to_ix.pb(seq.size());
+  seq.pb(cur);
+
+  par[v][0] = p;
+
+  for (int w: g[v]) {
+    if (w==p) continue;
+    init_dfs(w,v);
+    seq.pb(cur);
   }
 }
 
 void init(){
-  memset(lab,-1,sizeof lab);
-  dfs1(1,0);
-  
-  for(int i=0;i<eul.size();i++) sp[i][0]=eul[i];
+  lab.resize(N+1);
+  dep.resize(N+1);
+  invlab.clear();
+  seq.clear();
 
-  for(int j=1;(1<<j)<=eul.size();j++){
-    for(int i=0;i+(1<<j)<=eul.size();i++){
-      sp[i][j]=min(sp[i][j-1],sp[i+(1<<(j-1))][j-1]);
-    }
-  }
+  init_dfs(1,0);
+
+  sp.init(seq);
 
   //for going up the table
   for(int j=1;(1<<j)<=N;j++){
@@ -42,15 +51,15 @@ void init(){
 
 }
 
-
-inline int lca(int v,int w){
-  v=lab[v],w=lab[w];
-  if(v>w) swap(v,w);
-  int j=31-__builtin_clz(w-v+1);
-  // cout<<v<<' '<<w<<' '<<j<<'\n';
-  return inv[min(sp[v][j],sp[w-(1<<j)+1][j])];
+inline int lca(int a, int b) {
+  a = lab_to_ix[lab[a]];
+  b = lab_to_ix[lab[b]];
+  if(a>b) swap(a,b);
+  return invlab[sp.query(a,b)];
 }
 
+
+// Go k steps up the tree from vertex v.
 inline int up(int v,int k){
   int j=31-__builtin_clz(k);
   while(k>0){

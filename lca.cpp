@@ -1,3 +1,5 @@
+// NOTE: requires sparse-table.cpp
+
 const int MAXN=100100;
 
 int N;

@@ -25,4 +25,5 @@ inline int lbound(int v){
         if(p==0) return cur+1;
         cur+=p,v-=bit[cur],p>>=1;
     }
+    return cur;
 }

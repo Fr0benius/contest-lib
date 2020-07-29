@@ -34,17 +34,17 @@ struct suffix_auto{
       int nxt=nodes[tmp].next[c];
       if(nodes[nxt].len==nodes[tmp].len+1) nodes[cur].link=nxt;
       else{
-	int cpy=nodes.size();
-	nodes.push_back({});
-	nodes[cpy].next=nodes[nxt].next;
-	nodes[cpy].link=nodes[nxt].link;
-	nodes[cpy].len=nodes[tmp].len+1;
-	while(tmp!=-1 && nodes[tmp].next[c]==nxt){
-	  nodes[tmp].next[c]=cpy;
-	  tmp=nodes[tmp].link;
-	}
-	nodes[nxt].link=cpy;
-	nodes[cur].link=cpy;
+        int cpy=nodes.size();
+        nodes.push_back({});
+        nodes[cpy].next=nodes[nxt].next;
+        nodes[cpy].link=nodes[nxt].link;
+        nodes[cpy].len=nodes[tmp].len+1;
+        while(tmp!=-1 && nodes[tmp].next[c]==nxt){
+          nodes[tmp].next[c]=cpy;
+          tmp=nodes[tmp].link;
+        }
+        nodes[nxt].link=cpy;
+        nodes[cur].link=cpy;
       }
     }
     

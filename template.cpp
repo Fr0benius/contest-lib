@@ -16,6 +16,7 @@
 #include <cassert>
 #include <chrono>
 #include <random>
+#include <bitset>
 #include <unordered_set>
 #include <unordered_map>
 using namespace std;

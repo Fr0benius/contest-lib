@@ -12,7 +12,8 @@ struct segtree{
   segtree(int NN) : N(NN), seg(4*(N+1)) {}
 
   inline node combine(node l, node r){
-
+    // Merge the nodes
+    return l;
   }
 
   void build(int ix,int l,int r){

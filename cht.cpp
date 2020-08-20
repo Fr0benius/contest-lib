@@ -6,6 +6,7 @@
 template<typename T>
 struct CHT {
   vector<double> xvals;
+  // lines are pairs {m, b}
   vector<pair<T, T>> lines;
 
   inline static double isect(T m1, T b1, T m2, T b2) {

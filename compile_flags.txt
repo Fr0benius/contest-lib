@@ -1,0 +1,6 @@
+-std=gnu++17
+-Wall
+-Wextra
+-Wshadow
+-pedantic
+-O2

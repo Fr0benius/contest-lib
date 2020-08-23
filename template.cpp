@@ -38,6 +38,7 @@ template<typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr
 
 using ll = long long;
 using pii = pair<int,int>;
+using pll = pair<ll, ll>;
 template<typename T> using min_queue=priority_queue<T,vector<T>,greater<T>>;
 
 int main(){

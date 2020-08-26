@@ -1,35 +1,3 @@
-// Node interface
-// struct node {
-//   using FromT = ...
-//   using UpdateT = ...
-//   Node();
-//   Node(FromT v);
-//   node combine(node other);
-//   void push(node* l, node* r);
-//   void update(UpdateT v);
-// };
-
-struct rmq_node {
-  using ll = long long;
-  using FromT = ll;
-  using UpdateT = ll;
-  const ll ident = LLONG_MAX;
-
-  ll val, lazy;
-  rmq_node() : val(ident), lazy(ident) {}
-  rmq_node(ll v) : val(v), lazy(ident) {}
-  rmq_node combine(rmq_node other) { other.val = min(val, other.val); return other; }
-  void push(rmq_node* l, rmq_node* r) {
-    val = min(val, lazy);
-    if (l && r) {
-      l->lazy = min(lazy, l->lazy);
-      r->lazy = min(lazy, r->lazy);
-    }
-    lazy = ident;
-  }
-  void update(ll v) { lazy = min(lazy, update); }
-};
-
 template <typename Node, typename FromT = typename Node::FromT,
           typename UpdateT = typename Node::UpdateT>
 struct segtree {
@@ -38,7 +6,7 @@ struct segtree {
   vector<Node> seg;
 
   segtree(int N_) : N(N_), seg(4*(N_+1)) {}
-  segtree(const vector<FromT>& v) : N(v.size()) {
+  segtree(const vector<FromT>& v) : N(v.size()), seg(4*(v.size()+1)) {
     build(1, 0, N, v);
   }
 
@@ -50,7 +18,7 @@ struct segtree {
 
     build(ix*2,l,(l+r)/2, v);
     build(ix*2+1,(l+r)/2,r, v);
-    seg[ix] = combine(seg[2*ix], seg[2*ix+1]);
+    seg[ix] = seg[2*ix].combine(seg[2*ix+1]);
   }
 
   // Updates interval [a,b)
@@ -66,9 +34,9 @@ struct segtree {
       return;
     }
 
-    range_update(a,b,v,2*ix,l,(l+r)/2);
-    range_update(a,b,v,2*ix+1,(l+r)/2,r);
-    seg[ix] = combine(seg[2*ix], seg[2*ix+1]);
+    update(a,b,v,2*ix,l,(l+r)/2);
+    update(a,b,v,2*ix+1,(l+r)/2,r);
+    seg[ix] = seg[2*ix].combine(seg[2*ix+1]);
   }
   void update(int a,int b,UpdateT v) {update(a,b,v,1,0,N);}
 
@@ -85,7 +53,60 @@ struct segtree {
 
     Node resl=query(a,b,2*ix,l,(l+r)/2);
     Node resr=query(a,b,2*ix+1,(l+r)/2,r);
-    return combine(resl, resr);
+    return resl.combine(resr);
   }
   Node query(int a,int b) {return query(a,b,1,0,N);}
+};
+
+// Query: min
+// Update: add
+// Initialized with infinity by default.
+struct rmq_sum_node {
+  using FromT = ll;
+  using UpdateT = ll;
+  static const ll INF = LLONG_MAX;
+
+  ll val, lazy;
+  rmq_sum_node() : val(INF), lazy(0) {}
+  rmq_sum_node(FromT v) : val(v), lazy(0) {}
+  rmq_sum_node combine(rmq_sum_node other) {
+    assert(lazy==0);assert(other.lazy==0);
+    other.val = min(val, other.val);
+    return other;
+  }
+  void push(rmq_sum_node* l, rmq_sum_node* r) {
+    val += lazy;
+    if (l && r) {
+      l->lazy += lazy;
+      r->lazy += lazy;
+    }
+    lazy = 0;
+  }
+  void update(UpdateT v) { lazy += v; }
+};
+
+// Query: min
+// Update: min
+// Initialized with infinity by default.
+struct rmq_node {
+  using FromT = ll;
+  using UpdateT = ll;
+  static const ll INF = LLONG_MAX;
+
+  ll val, lazy;
+  rmq_node() : val(INF), lazy(INF) {}
+  rmq_node(FromT v) : val(v), lazy(INF) {}
+  rmq_node combine(rmq_node other) {
+    other.val = min(val, other.val);
+    return other;
+  }
+  void push(rmq_node* l, rmq_node* r) {
+    val = min(val, lazy);
+    if (l && r) {
+      l->lazy = min(lazy, l->lazy);
+      r->lazy = min(lazy, r->lazy);
+    }
+    lazy = INF;
+  }
+  void update(UpdateT v) { lazy = min(lazy, v); }
 };

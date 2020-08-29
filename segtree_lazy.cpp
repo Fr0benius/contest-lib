@@ -77,8 +77,8 @@ struct rmq_sum_node {
   void push(rmq_sum_node* l, rmq_sum_node* r) {
     val += lazy;
     if (l && r) {
-      l->lazy += lazy;
-      r->lazy += lazy;
+      l->update(lazy);
+      r->update(lazy);
     }
     lazy = 0;
   }
@@ -103,8 +103,8 @@ struct rmq_node {
   void push(rmq_node* l, rmq_node* r) {
     val = min(val, lazy);
     if (l && r) {
-      l->lazy = min(lazy, l->lazy);
-      r->lazy = min(lazy, r->lazy);
+      l->update(lazy);
+      r->update(lazy);
     }
     lazy = INF;
   }

@@ -2,5 +2,11 @@
 -Wall
 -Wextra
 -Wshadow
+-Wno-sign-compare
 -pedantic
 -O2
+-DQLEG_DEBUG
+-nostdinc++
+-I/usr/local/Cellar/gcc/10.2.0/include/c++/10.2.0/
+-I/usr/local/Cellar/gcc/10.2.0/include/c++/10.2.0/x86_64-apple-darwin19/
+

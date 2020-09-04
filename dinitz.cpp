@@ -16,7 +16,7 @@ struct maxflow{
   vector<edge> edges;
 
   maxflow(int NN,int sr,int sk)
-    : N(NN),g(N+1),lvl(N+1),ptrs(N+1),src(sr),snk(sk) {}
+    : N(NN),src(sr),snk(sk),g(N+1),lvl(N+1),ptrs(N+1){}
 
   void add(int x,int y,ll cap){
     edges.push_back({x,y,cap});
@@ -68,7 +68,7 @@ struct maxflow{
     ll cur=0;
     while(bfs()){
       fill(ptrs.begin(),ptrs.end(),0);
-      while(cur=dfs(src)) res+=cur;
+      while ((cur = dfs(src)) != 0) res += cur;
     }
     return res;
   }

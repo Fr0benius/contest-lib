@@ -2,6 +2,7 @@
 // To complete the inverse fft, divide all coefficients by N.
 // TODO: figure out precision
 
+using cd = complex<double>;
 void fft(vector<cd>& a, const int N, const int dir = 1) {
   for (int i = N; i < a.size(); i++) {
     a[i%N] += a[i];

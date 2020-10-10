@@ -8,6 +8,7 @@ void fft(vector<cd>& a, const int N, const int dir = 1) {
     a[i%N] += a[i];
   }
   a.resize(N);
+  if (N == 1) return;
 
   vector<cd> roots(N/2);
   static const double PI = acos(-1.0);

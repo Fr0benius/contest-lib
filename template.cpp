@@ -34,11 +34,11 @@ void dbg_out() { cerr << endl; }
 template<typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr << ' ' << H; dbg_out(T...); }
 
 template<class Fun>
-class y_combinator_result {
+class _y_combinator_result {
     Fun fun_;
 public:
     template<class T>
-    explicit y_combinator_result(T &&fun): fun_(std::forward<T>(fun)) {}
+    explicit _y_combinator_result(T &&fun): fun_(std::forward<T>(fun)) {}
 
     template<class ...Args>
     decltype(auto) operator()(Args &&...args) {
@@ -48,7 +48,7 @@ public:
 
 template<class Fun>
 decltype(auto) y_combinator(Fun &&fun) {
-    return y_combinator_result<std::decay_t<Fun>>(std::forward<Fun>(fun));
+    return _y_combinator_result<std::decay_t<Fun>>(std::forward<Fun>(fun));
 }
 
 #define dbg(...) cerr << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)

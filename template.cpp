@@ -33,6 +33,12 @@ template<typename A, typename B> ostream& operator<<(ostream& os, const pair<A, 
 void dbg_out() { cerr << endl; }
 template<typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr << ' ' << H; dbg_out(T...); }
 
+#define dbg(...) cerr << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
+#else
+#define dbg(...)
+#endif
+
+
 template<class Fun>
 class _y_combinator_result {
     Fun fun_;
@@ -50,11 +56,6 @@ template<class Fun>
 decltype(auto) y_combinator(Fun &&fun) {
     return _y_combinator_result<std::decay_t<Fun>>(std::forward<Fun>(fun));
 }
-
-#define dbg(...) cerr << "(" << #__VA_ARGS__ << "):", dbg_out(__VA_ARGS__)
-#else
-#define dbg(...)
-#endif
 
 using ll = long long;
 using pii = pair<int,int>;

@@ -1,8 +1,8 @@
 // Returns the prefix function of s.
-// s can be a string or vector.
-template<typename T>
-vector<int> kmp(const T& s) {
-  int N = s.size();
+// s can be any indexable structure (array, vector, string, etc)
+template<typename V>
+vector<int> kmp(const V& s) {
+  int N = size(s);
   vector<int> res(N);
   for (int i=1; i<N; i++) {
     res[i] = res[i-1];
@@ -12,3 +12,20 @@ vector<int> kmp(const T& s) {
   }
   return res;
 }
+
+template<typename V>
+vector<int> zfunc(const V& s) {
+  int N = size(s);
+  vector<int> z(N);
+  int l = 0, r = 1;
+  for (int i = 1; i < N; i++) {
+    if (i < r)  
+      z[i] = min(z[i-l], r - i);
+    while (i+z[i] < N && s[z[i]] == s[i+z[i]])
+      z[i]++;
+    if (i+z[i] > r)
+      l = i, r = i+z[i];
+  }
+  return z;
+}
+

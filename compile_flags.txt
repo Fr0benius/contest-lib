@@ -7,5 +7,5 @@
 -O2
 -DQLEG_DEBUG
 -nostdinc++
--I/usr/local/Cellar/gcc/10.2.0_4/include/c++/10.2.0/
--I/usr/local/Cellar/gcc/10.2.0_4/include/c++/10.2.0/x86_64-apple-darwin20/
+-I/usr/local/Cellar/gcc/11.1.0_1/include/c++/11.1.0/
+-I/usr/local/Cellar/gcc/11.1.0_1/include/c++/11.1.0/x86_64-apple-darwin20

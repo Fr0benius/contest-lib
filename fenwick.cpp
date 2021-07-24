@@ -1,11 +1,11 @@
 template<typename T>
-struct BIT {
+struct fenwick {
   int N;
   vector<T> bit;
 
-  BIT(int sz) : N(sz), bit(sz+1) { }
+  fenwick(int sz) : N(sz), bit(sz+1) { }
 
-  inline void update(int ix,T v){
+  inline void update(int ix, T v){
     assert(ix >= 0);
     assert(ix < N);
     ix++;
@@ -35,5 +35,29 @@ struct BIT {
       }
     }
     return k+1;
+  }
+};
+
+template<typename T>
+struct reverse_fenwick {
+  int N;
+  vector<T> bit;
+
+  reverse_fenwick(int sz) : N(sz), bit(sz+1) { }
+
+  // updates the interval [0, ix)
+  inline void update(int ix, T v){
+    assert(ix >= 0);
+    assert(ix <= N);
+    for(;ix;ix-=ix&-ix) bit[ix]+=v;
+  }
+
+  inline T query(int ix){
+    assert(ix >= 0);
+    assert(ix < N);
+    T res=0;
+    ix++;
+    for(;ix<=N;ix+=ix&-ix) res+=bit[ix];
+    return res;
   }
 };

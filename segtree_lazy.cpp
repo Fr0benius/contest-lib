@@ -1,112 +1,110 @@
-template <typename Node, typename FromT = typename Node::FromT,
-          typename UpdateT = typename Node::UpdateT>
+template <typename T>
 struct segtree {
   //Array indices from 0 to N-1
   const int N;
-  vector<Node> seg;
 
-  segtree(int N_) : N(N_), seg(4*(N_+1)) {}
-  segtree(const vector<FromT>& v) : N(v.size()), seg(4*(v.size()+1)) {
+  using ValT = typename T::ValT;
+  using UpdT = typename T::UpdT;
+  const ValT val_id = T::val_id;
+  const UpdT upd_id = T::upd_id;
+  vector<ValT> vals;
+  vector<UpdT> lazy;
+
+  segtree(int N) : N(N), vals(4*(N+1), val_id), lazy(4*(N+1), upd_id) {}
+
+  segtree(const vector<ValT>& v) : N(v.size()), vals(4*(N+1), val_id), lazy(4*(N+1), upd_id) {
     build(1, 0, N, v);
   }
 
-  void build(int ix,int l,int r, const vector<FromT>& v){
+  void build(int ix,int l,int r, const vector<ValT>& v){
     if(r-l==1){
-      seg[ix] = Node(v[l]);
+      vals[ix] = v[l];
       return;
     }
 
     build(ix*2,l,(l+r)/2, v);
     build(ix*2+1,(l+r)/2,r, v);
-    seg[ix] = seg[2*ix].combine(seg[2*ix+1]);
+    vals[ix] = T::combine(vals[2*ix], vals[2*ix+1]);
+  }
+
+  void push(int ix, bool nonleaf) {
+    vals[ix] = T::apply(vals[ix], lazy[ix]);
+    if (nonleaf) {
+      lazy[2*ix] = T::combine_update(lazy[2*ix], lazy[ix]);
+      lazy[2*ix+1] = T::combine_update(lazy[2*ix+1], lazy[ix]);
+    }
+    lazy[ix] = T::upd_id;
   }
 
   // Updates interval [a,b)
-  void update(int a,int b,UpdateT v,int ix,int l,int r){
-    Node* left_node = r-l>1 ? &seg[2*ix] : nullptr;
-    Node* right_node = r-l>1 ? &seg[2*ix+1] : nullptr;
-    seg[ix].push(left_node, right_node);
+  void update(int a,int b,UpdT v,int ix=1,int l=0,int r=-1){
+    if (r == -1) r = N;
+    push(ix, r-l > 1);
     if(b<=l || a>=r) return;
 
     if(a<=l && r<=b){
-      seg[ix].update(v);
-      seg[ix].push(left_node, right_node);
+      lazy[ix] = T::combine_update(lazy[ix], v);
+      push(ix, r-l > 1);
       return;
     }
 
     update(a,b,v,2*ix,l,(l+r)/2);
     update(a,b,v,2*ix+1,(l+r)/2,r);
-    seg[ix] = seg[2*ix].combine(seg[2*ix+1]);
+    vals[ix] = T::combine(vals[2*ix], vals[2*ix+1]);
   }
-  void update(int a,int b,UpdateT v) {update(a,b,v,1,0,N);}
 
   // Queries interval [a,b)
-  Node query(int a,int b,int ix,int l,int r){
-    Node* left_node = r-l>1 ? &seg[2*ix] : nullptr;
-    Node* right_node = r-l>1 ? &seg[2*ix+1] : nullptr;
-    seg[ix].push(left_node, right_node);
+  ValT query(int a,int b,int ix=1,int l=0,int r=-1){
+    if (r == -1) r = N;
+    push(ix, r-l > 1);
 
-    if(b<=l || a>=r) return Node();//return identity here
+    if(b<=l || a>=r) return T::val_id;
     if(a<=l && r<=b){
-      return seg[ix];
+      return vals[ix];
     }
 
-    Node resl=query(a,b,2*ix,l,(l+r)/2);
-    Node resr=query(a,b,2*ix+1,(l+r)/2,r);
-    return resl.combine(resr);
+    ValT resl=query(a,b,2*ix,l,(l+r)/2);
+    ValT resr=query(a,b,2*ix+1,(l+r)/2,r);
+    return T::combine(resl, resr);
   }
-  Node query(int a,int b) {return query(a,b,1,0,N);}
 };
 
 // Query: min
 // Update: add
 // Initialized with infinity by default.
 struct rmq_sum_node {
-  using FromT = ll;
-  using UpdateT = ll;
-  static const ll INF = LLONG_MAX;
+  using ValT = ll;
+  using UpdT = ll;
+  static const ValT val_id = LLONG_MAX;
+  static const UpdT upd_id = 0;
 
-  ll val, lazy;
-  rmq_sum_node() : val(INF), lazy(0) {}
-  rmq_sum_node(FromT v) : val(v), lazy(0) {}
-  rmq_sum_node combine(rmq_sum_node other) {
-    assert(lazy==0);assert(other.lazy==0);
-    other.val = min(val, other.val);
-    return other;
+  static ValT combine(ValT l, ValT r) {
+    return min(l, r);
   }
-  void push(rmq_sum_node* l, rmq_sum_node* r) {
-    val += lazy;
-    if (l && r) {
-      l->update(lazy);
-      r->update(lazy);
-    }
-    lazy = 0;
+  static UpdT combine_update(UpdT a, UpdT b) {
+    return a + b;
   }
-  void update(UpdateT v) { lazy += v; }
+  static ValT apply(ValT x, UpdT u) {
+    return x + u;
+  }
 };
 
 // Query: min
 // Update: min
 // Initialized with infinity by default.
 struct rmq_node {
-  using FromT = ll;
-  using UpdateT = ll;
-  static const ll INF = LLONG_MAX;
+  using ValT = ll;
+  using UpdT = ll;
+  static const ValT val_id = LLONG_MAX;
+  static const UpdT upd_id = LLONG_MAX;
 
-  ll val, lazy;
-  rmq_node() : val(INF), lazy(INF) {}
-  rmq_node(FromT v) : val(v), lazy(INF) {}
-  rmq_node combine(rmq_node other) {
-    other.val = min(val, other.val);
-    return other;
+  static ValT combine(ValT l, ValT r) {
+    return min(l, r);
   }
-  void push(rmq_node* l, rmq_node* r) {
-    val = min(val, lazy);
-    if (l && r) {
-      l->update(lazy);
-      r->update(lazy);
-    }
-    lazy = INF;
+  static UpdT combine_update(UpdT a, UpdT b) {
+    return min(a, b);
   }
-  void update(UpdateT v) { lazy = min(lazy, v); }
+  static ValT apply(ValT x, UpdT u) {
+    return min(x, u);
+  }
 };

@@ -12,6 +12,9 @@ struct segtree {
 
   segtree(int N) : N(N), vals(4*(N+1), val_id), lazy(4*(N+1), upd_id) {}
 
+  // Only use if x is idempotent
+  segtree(int N, ValT x) : N(N), vals(4*(N+1), x), lazy(4*(N+1), upd_id) {}
+
   segtree(const vector<ValT>& v) : N(v.size()), vals(4*(N+1), val_id), lazy(4*(N+1), upd_id) {
     build(1, 0, N, v);
   }

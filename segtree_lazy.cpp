@@ -75,7 +75,7 @@ struct segtree {
 // Query: min
 // Update: add
 // Initialized with infinity by default.
-struct rmq_sum_node {
+struct rmq_sum {
   using ValT = ll;
   using UpdT = ll;
   static const ValT val_id = LLONG_MAX;
@@ -95,7 +95,7 @@ struct rmq_sum_node {
 // Query: min
 // Update: min
 // Initialized with infinity by default.
-struct rmq_node {
+struct rmq {
   using ValT = ll;
   using UpdT = ll;
   static const ValT val_id = LLONG_MAX;

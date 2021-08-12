@@ -31,10 +31,10 @@ struct segtree {
   }
 
   void push(int ix, bool nonleaf) {
-    vals[ix] = T::apply(vals[ix], lazy[ix]);
+    T::apply(vals[ix], lazy[ix]);
     if (nonleaf) {
-      lazy[2*ix] = T::combine_update(lazy[2*ix], lazy[ix]);
-      lazy[2*ix+1] = T::combine_update(lazy[2*ix+1], lazy[ix]);
+      T::combine_update(lazy[2*ix], lazy[ix]);
+      T::combine_update(lazy[2*ix+1], lazy[ix]);
     }
     lazy[ix] = T::upd_id;
   }
@@ -46,7 +46,7 @@ struct segtree {
     if(b<=l || a>=r) return;
 
     if(a<=l && r<=b){
-      lazy[ix] = T::combine_update(lazy[ix], v);
+      T::combine_update(lazy[ix], v);
       push(ix, r-l > 1);
       return;
     }
@@ -84,11 +84,11 @@ struct rmq_sum {
   static ValT combine(ValT l, ValT r) {
     return min(l, r);
   }
-  static UpdT combine_update(UpdT a, UpdT b) {
-    return a + b;
+  static void combine_update(UpdT& a, UpdT b) {
+    a += b;
   }
-  static ValT apply(ValT x, UpdT u) {
-    return x + u;
+  static void apply(ValT& x, UpdT u) {
+    x += u;
   }
 };
 
@@ -104,10 +104,53 @@ struct rmq {
   static ValT combine(ValT l, ValT r) {
     return min(l, r);
   }
-  static UpdT combine_update(UpdT a, UpdT b) {
-    return min(a, b);
+  static void combine_update(UpdT& a, UpdT b) {
+    a = min(a, b);
   }
-  static ValT apply(ValT x, UpdT u) {
-    return min(x, u);
+  static void apply(ValT& x, UpdT u) {
+    x = min(x, u);
   }
 };
+
+// Query: min
+// Update: set
+// Initialized with infinity by default.
+// Uses a sentinel value (infinity) to represent no-op.
+struct rmq_set {
+  using ValT = ll;
+  using UpdT = ll;
+  static const ValT val_id = LLONG_MAX;
+  static const UpdT upd_id = LLONG_MAX;
+
+  static ValT combine(ValT l, ValT r) {
+    return min(l, r);
+  }
+  static void combine_update(UpdT& a, UpdT b) {
+    if (b != upd_id) a = b;
+  }
+  static void apply(ValT& x, UpdT u) {
+    if (u != upd_id) x = u;
+  }
+};
+
+// Query: max
+// Update: set
+// Initialized with -infinity by default.
+// Uses a sentinel value (-infinity) to represent no-op.
+struct rmxq_set {
+  using ValT = ll;
+  using UpdT = ll;
+  static const ValT val_id = LLONG_MIN;
+  static const UpdT upd_id = LLONG_MIN;
+
+  static ValT combine(ValT l, ValT r) {
+    return max(l, r);
+  }
+  static void combine_update(UpdT& a, UpdT b) {
+    if (b != upd_id) a = b;
+  }
+  static void apply(ValT& x, UpdT u) {
+    if (u != upd_id) x = u;
+  }
+};
+

@@ -189,8 +189,6 @@ int main(){
     prv[x] = i;
   }
 
-  /* dbg(seg.query(3, 4, roots[3])); */
-  /* dbg(seg.query(3, 5, roots[3])); */
   for (int k = 1; k <= N; k++) {
     int res = 0;
     int j = 0;
@@ -198,7 +196,6 @@ int main(){
       int j1 = seg.lower_bound([k] (int x) { 
           return x > k;
       }, roots[j]);
-      /* dbg(k, j, j1); */
       j = j1-1;
       res++;
     }

@@ -1,7 +1,7 @@
-template <typename T>
+template <typename T, typename I=int>
 struct persistent_segtree {
   // indices from L to R-1
-  const int L, R;
+  const I L, R;
 
   using ValT = typename T::ValT;
   using UpdT = typename T::UpdT;
@@ -14,55 +14,78 @@ struct persistent_segtree {
     int right = -1;
   };
 
-  vector<node> nodes;
+  vector<ValT> vals;
+  vector<int> left, right;
 
   int new_node() {
-    nodes.pb({});
-    return nodes.size() - 1;
+    vals.pb(val_id);
+    left.pb(-1);
+    right.pb(-1);
+    return vals.size() - 1;
   }
 
-  persistent_segtree(int L, int R, int cap = 0) : L(L), R(R), nodes(1) {
-    if (cap > 0) nodes.reserve(cap);
+  persistent_segtree(I L, I R, int cap = 0) : L(L), R(R) {
+    new_node();
+    if (cap > 0) vals.reserve(cap), left.reserve(cap), right.reserve(cap);
   }
 
   // Returns new root index
-  int update(int a, UpdT v,int ix=0,int l=0,int r=-1){
+  int update(I a, UpdT v,int ix=0,I l=0,I r=-1){
     if (r < l) l = L, r = R;
     if(a<l || a>=r) return ix;
 
     if(r-l == 1) {
       int ixn = new_node();
-      nodes[ixn] = nodes[ix];
-      T::apply(nodes[ixn].val, v);
+      vals[ixn] = vals[ix];
+      T::apply(vals[ixn], v);
       return ixn;
     }
 
-    int ixl = nodes[ix].left;
-    int ixr = nodes[ix].right;
+    int ixl = left[ix];
+    int ixr = right[ix];
     if (ixl == -1) ixl = new_node(), ixr = new_node();
-    const int m = (l+r)/2;
+    const I m = (l+r)/2;
     if (a < m) {
       ixl = update(a,v,ixl,l,m);
     } else {
       ixr = update(a,v,ixr,m,r);
     }
     int ixn = new_node();
-    nodes[ixn].val = T::combine(nodes[ixl].val, nodes[ixr].val);
-    nodes[ixn].left = ixl;
-    nodes[ixn].right = ixr;
+    vals[ixn] = T::combine(vals[ixl], vals[ixr]);
+    left[ixn] = ixl;
+    right[ixn] = ixr;
     return ixn;
   }
 
   // Queries interval [a,b)
-  ValT query(int a,int b,int ix=0,int l=0,int r=-1){
+  ValT query(I a,I b,int ix=0,I l=0,I r=-1){
     if (r < l) l = L, r = R;
     if(b<=l || a>=r) return T::val_id;
     if(a<=l && r<=b){
-      return nodes[ix].val;
+      return vals[ix];
     }
-    ValT resl=query(a,b,nodes[ix].left,l,(l+r)/2);
-    ValT resr=query(a,b,nodes[ix].right,(l+r)/2,r);
+    ValT resl=query(a,b,left[ix],l,(l+r)/2);
+    ValT resr=query(a,b,right[ix],(l+r)/2,r);
     return T::combine(resl, resr);
+  }
+
+  // returns lowest r s.t. query(L, r) satisfies predicate (R+1 otherwise)
+  template<typename P>
+  I lower_bound(P&& pred, int ix=0, I l=0, I r=-1, ValT acc=val_id) {
+    if (r < l) {
+      if (!pred(vals[ix])) return R+1;
+      l = L, r = R;
+    }
+    
+    if (left[ix] == -1) {
+      return pred(acc) ? l : r;
+    }
+    const I m = (l+r)/2;
+    ValT nacc = T::combine(acc, vals[left[ix]]);
+    if (pred(nacc))
+      return lower_bound(pred, left[ix], l, m, acc);
+    else
+      return lower_bound(pred, right[ix], m, r, nacc);
   }
 };
 

@@ -2,13 +2,3 @@
 
 A small (but slowly growing!) library for programming contests.
 
-- The =compile_flags= file is for clang tools (Currently using =clangd=). This file should exist in some ancestor of the working directory. Since I'm using GCC on macOS, it's installed in a weird place so I had to remove the system include folders:
-  #+BEGIN_SRC
--nostdinc++
--I/usr/local/Cellar/gcc/10.2.0/include/c++/10.2.0/
--I/usr/local/Cellar/gcc/10.2.0/include/c++/10.2.0/x86_64-apple-darwin19/
-  #+END_SRC
-
-they should be replaced whenever gcc gets upgraded. Maybe I should create some symlinks...
-
-Really, the standard includes are OK as long as you use stuff that is both in GCC and Clang. That means ~gcd~, ~lcm~, policy-based data structures, and maybe some ~__builtin_...~ functions would be flagged as errors.

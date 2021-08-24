@@ -21,13 +21,14 @@ struct fenwick {
     return res;
   }
 
-  // Find least k such that query(k)>=v
+  // Find least k such that query(k)>=v, N+1 otherwise
   // Only works if array elements are nondecreasing
   inline int lbound(T v){
     if(v<=0) return 0;
     int lg = 31 - __builtin_clz(N);
     int k = 0;
     for (int i = lg; i >= 0; i--) {
+      if (k + (1<<i) > N) continue;
       T x = bit[k + (1<<i)];
       if (v > x) {
         v -= x;

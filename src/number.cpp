@@ -27,3 +27,17 @@ ll choose(ll a, ll b) {
   if (b < 0 || b > a) return 0LL;
   return fac[a] * ifac[b] % MOD * ifac[a-b] % MOD;
 }
+
+// returns vector of lowest prime divisors for [2, M]
+vector<int> sieve(int M) {
+  vector<int> low(M+1);
+  vector<int> primes;
+  for (int n = 2; n <= M; n++) {
+    if (low[n] == 0) low[n] = n, primes.pb(n);
+    for (int p : primes) {
+      if (p*n > M || p > low[n]) break;
+      low[p*n] = p;
+    }
+  }
+  return low;
+}

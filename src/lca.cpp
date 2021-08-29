@@ -57,7 +57,7 @@ inline int lca(int a, int b) {
   a = lab_to_ix[lab[a]];
   b = lab_to_ix[lab[b]];
   if(a>b) swap(a,b);
-  return invlab[sp.query(a,b)];
+  return invlab[sp.query(a,b+1)];
 }
 
 

@@ -14,9 +14,9 @@ struct sparse {
     }
   }
 
-  // Query the range [l,r].
+  // Query the range [l,r).
   T query(int l, int r) {
-    int i = 31-__builtin_clz(r-l+1); // This is the floor of log_2(r-l+1)
-    return min(table[i][l], table[i][r-(1<<i)+1]);
+    int i = 31-__builtin_clz(r-l); // This is the floor of log_2(r-l+1)
+    return min(table[i][l], table[i][r-(1<<i)]);
   }
 };

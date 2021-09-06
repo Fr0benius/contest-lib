@@ -154,3 +154,22 @@ struct rmxq_set {
   }
 };
 
+// Query: add
+// Update: set
+// Uses a sentinel value (-infinity) to represent no-op.
+struct sum_set {
+  using ValT = pair<ll, int>;
+  using UpdT = ll;
+  static constexpr ValT val_id = {0, 0};
+  static constexpr UpdT upd_id = LLONG_MIN;
+
+  static ValT combine(ValT l, ValT r) {
+    return {l.fst + r.fst, l.snd + r.snd};
+  }
+  static void combine_update(UpdT& a, UpdT b) {
+    if (b != upd_id) a = b;
+  }
+  static void apply(ValT& x, UpdT u) {
+    if (u != upd_id) x.fst = x.snd * u;
+  }
+};

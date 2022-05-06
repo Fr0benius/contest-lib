@@ -62,7 +62,9 @@ using pii = pair<int,int>;
 using pll = pair<ll, ll>;
 template<typename T> using min_queue=priority_queue<T,vector<T>,greater<T>>;
 
-int main(){
+// END OF TEMPLATE
+
+int main() {
   ios::sync_with_stdio(0);cin.tie(0);
 
 }

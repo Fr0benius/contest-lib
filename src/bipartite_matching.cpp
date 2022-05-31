@@ -1,3 +1,4 @@
+// Fast variant of Kuhn's algorithm
 struct matcher {
   int N, M;
   // The bipartite parts are given explicitly - i is in [0, N) and g[i] is in [0,M).

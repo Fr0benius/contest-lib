@@ -38,33 +38,33 @@ template<typename Head, typename... Tail> void dbg_out(Head H, Tail... T) { cerr
 #define dbg(...)
 #endif
 
-
-template<class Fun>
+template <class Fun>
 class _y_combinator_result {
-    Fun fun_;
-public:
-    template<class T>
-    explicit _y_combinator_result(T &&fun): fun_(std::forward<T>(fun)) {}
+  Fun fun_;
+ public:
+  template <class T>
+  explicit _y_combinator_result(T&& fun) : fun_(std::forward<T>(fun)) {}
 
-    template<class ...Args>
-    decltype(auto) operator()(Args &&...args) {
-        return fun_(std::ref(*this), std::forward<Args>(args)...);
-    }
+  template <class... Args>
+  decltype(auto) operator()(Args&&... args) {
+    return fun_(std::ref(*this), std::forward<Args>(args)...);
+  }
 };
 
-template<class Fun>
-decltype(auto) y_combinator(Fun &&fun) {
-    return _y_combinator_result<std::decay_t<Fun>>(std::forward<Fun>(fun));
+template <class Fun>
+decltype(auto) y_combinator(Fun&& fun) {
+  return _y_combinator_result<std::decay_t<Fun>>(std::forward<Fun>(fun));
 }
 
 using ll = long long;
-using pii = pair<int,int>;
+using pii = pair<int, int>;
 using pll = pair<ll, ll>;
-template<typename T> using min_queue=priority_queue<T,vector<T>,greater<T>>;
+template <typename T>
+using min_queue = priority_queue<T, vector<T>, greater<T>>;
 
 // END OF TEMPLATE
 
 int main() {
-  ios::sync_with_stdio(0);cin.tie(0);
+  ios::sync_with_stdio(0); cin.tie(0);
 
 }

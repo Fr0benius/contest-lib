@@ -1,12 +1,69 @@
-#![allow(dead_code)]
-#![allow(unused)]
 #![allow(unused_imports)]
+#![allow(unused_must_use)]
 #![allow(non_snake_case)]
 
-use std::collections::{HashSet, HashMap};
-use std::cmp::{min,max,Reverse};
+use std::collections::{VecDeque, HashSet, HashMap};
+use std::cmp::{min, max, Reverse};
 use std::io::{self, prelude::*};
 use std::str;
+use std::marker::PhantomData;
+ 
+fn solve<R: BufRead, W: Write>(sc: &mut Scanner<R>, wr: &mut W) {
+}
+
+macro_rules! recursive_function {
+    ($name: ident, $trait: ident, ($($type: ident $arg: ident,)*)) => {
+        pub trait $trait<$($type, )*Output> {
+            fn call(&mut self, $($arg: $type,)*) -> Output;
+        }
+ 
+        pub struct $name<F, $($type, )*Output>
+        where
+            F: FnMut(&mut dyn $trait<$($type, )*Output>, $($type, )*) -> Output,
+        {
+            f: F,
+            $($arg: PhantomData<$type>,
+            )*
+            phantom_output: PhantomData<Output>,
+        }
+ 
+        impl<F, $($type, )*Output> $name<F, $($type, )*Output>
+        where
+            F: FnMut(&mut dyn $trait<$($type, )*Output>, $($type, )*) -> Output,
+        {
+            pub fn new(f: F) -> Self {
+                Self {
+                    f,
+                    $($arg: Default::default(),
+                    )*
+                    phantom_output: Default::default(),
+                }
+            }
+        }
+ 
+        impl<F, $($type, )*Output> $trait<$($type, )*Output> for $name<F, $($type, )*Output>
+        where
+            F: FnMut(&mut dyn $trait<$($type, )*Output>, $($type, )*) -> Output,
+        {
+            fn call(&mut self, $($arg: $type,)*) -> Output {
+                let const_ptr = &self.f as *const F;
+                let mut_ptr = const_ptr as *mut F;
+                unsafe { (&mut *mut_ptr)(self, $($arg, )*) }
+            }
+        }
+    }
+}
+ 
+recursive_function!(RecursiveFunction0, Callable0, ());
+recursive_function!(RecursiveFunction, Callable, (Arg arg,));
+recursive_function!(RecursiveFunction2, Callable2, (Arg1 arg1, Arg2 arg2,));
+recursive_function!(RecursiveFunction3, Callable3, (Arg1 arg1, Arg2 arg2, Arg3 arg3,));
+recursive_function!(RecursiveFunction4, Callable4, (Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4,));
+recursive_function!(RecursiveFunction5, Callable5, (Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5,));
+recursive_function!(RecursiveFunction6, Callable6, (Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6,));
+recursive_function!(RecursiveFunction7, Callable7, (Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7,));
+recursive_function!(RecursiveFunction8, Callable8, (Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8,));
+recursive_function!(RecursiveFunction9, Callable9, (Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9,));
 
 struct Scanner<R> {
     reader: R,
@@ -17,7 +74,7 @@ impl<R: BufRead> Scanner<R> {
     fn new(reader: R) -> Self {
         Self { reader, buf_str: vec![], buf_iter: "".split_whitespace() }
     }
-    fn token<T: str::FromStr>(&mut self) -> T {
+    fn tok<T: str::FromStr>(&mut self) -> T {
         loop {
             if let Some(token) = self.buf_iter.next() {
                 return token.parse().ok().expect("Failed parse");
@@ -30,9 +87,6 @@ impl<R: BufRead> Scanner<R> {
             }
         }
     }
-}
-
-fn solve<R: BufRead, W: Write>(scan: &mut Scanner<R>, w: &mut W) {
 }
 
 fn main() {

@@ -1,7 +1,7 @@
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
-#![allow(non_snake_case)]
 #![allow(unused_macros)]
+#![allow(non_snake_case)]
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::many_single_char_names)]
 #![allow(clippy::needless_range_loop)]

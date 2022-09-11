@@ -2,3 +2,4 @@
 
 A small (but slowly growing!) library for programming contests.
 
+The rust version has a regex dependency to help with parsing for Advent of Code. But other than that, all the algorithms are standalone.

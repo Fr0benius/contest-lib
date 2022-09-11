@@ -5,6 +5,7 @@
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::many_single_char_names)]
 #![allow(clippy::needless_range_loop)]
+#![allow(clippy::comparison_chain)]
 
 use std::cmp::{max, min, Reverse};
 use std::collections::{BinaryHeap, HashMap, HashSet, VecDeque};

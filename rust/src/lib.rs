@@ -10,3 +10,4 @@ pub mod cellular_auto;
 pub mod bin_search;
 pub mod misc;
 pub mod kmp;
+pub mod suffix_array;

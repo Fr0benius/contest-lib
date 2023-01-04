@@ -32,7 +32,7 @@ pub fn gcd(mut a: i64, mut b: i64) -> i64 {
     b = b.abs();
     while b > 0 {
         a %= b;
-        (a, b) = (b, a);
+        std::mem::swap(&mut a, &mut b);
     }
     a
 }

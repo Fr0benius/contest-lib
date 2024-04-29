@@ -32,6 +32,7 @@ fn manacher_odd<T: PartialEq + Copy>(t: &[T], sentinels: [T; 2]) -> Vec<usize> {
             l = i - p[i];
             r = i + p[i];
         }
+        p[i] -= 1;
     }
     p[1..n + 1].to_owned()
 }

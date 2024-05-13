@@ -1,3 +1,19 @@
+pub fn mod_exp(mut a: i64, mut b: i64, m: i64) -> i64 {
+    a %= m;
+    if a < 0 {
+        a += m;
+    }
+    let mut res = 1;
+    while b > 0 {
+        if b % 2 == 1 {
+            res = res * a % m;
+        }
+        a = a * a % m;
+        b /= 2;
+    }
+    res
+}
+
 /// Returns x, y such that ax + by = gcd(a, b);
 /// Assumes a, b are >= 0
 pub fn extended_euclid(a: i64, b: i64) -> (i64, i64, i64) {
@@ -58,6 +74,11 @@ pub fn cr_theorem(mut a: i64, n: i64, mut b: i64, m: i64) -> i64 {
 pub mod tests {
     use super::*;
 
+    #[test]
+    fn mod_exp_test() {
+        assert_eq!(mod_exp(2, 20, 12341234), 1<<20);
+        assert_eq!(mod_exp(2, 20, 1234), (1<<20) % 1234);
+    }
     #[test]
     fn gcd_test() {
         assert_eq!(gcd(666, -148), 74);

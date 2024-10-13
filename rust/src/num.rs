@@ -76,6 +76,7 @@ impl Factorials {
         res
     }
 }
+
 pub fn gcd(mut a: i64, mut b: i64) -> i64 {
     a = a.abs();
     b = b.abs();

@@ -1,13 +1,11 @@
-const MOD: i32 = 998_244_353;
-
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct ModInt(i32);
+pub struct ModInt<const M: i32>(i32);
 
-impl ModInt {
+impl<const M: i32> ModInt<M> {
     pub fn new(x: i64) -> Self {
-        let mut x = (x % MOD as i64) as i32;
+        let mut x = (x % M as i64) as i32;
         if x < 0 {
-            x += MOD;
+            x += M;
         }
         Self(x)
     }
@@ -26,40 +24,39 @@ impl ModInt {
     }
 
     /// Modular inverse
-    /// Assumes MOD is prime and number is nonzero
+    /// Assumes M is prime and number is nonzero
     pub fn inv(self) -> Self {
-        self.pow((MOD - 2) as i64)
+        self.pow((M - 2) as i64)
     }
 }
 
-impl std::ops::Add for ModInt {
+impl<const M: i32> std::ops::Add for ModInt<M> {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
         let mut res = self.0 + rhs.0;
-        if res >= MOD {
-            res -= MOD
+        if res >= M {
+            res -= M
         }
         Self(res)
     }
-
 }
 
-impl std::ops::Mul for ModInt {
+impl<const M: i32> std::ops::Mul for ModInt<M> {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Self(((self.0 as i64 * rhs.0 as i64) % MOD as i64) as i32)
+        Self(((self.0 as i64 * rhs.0 as i64) % M as i64) as i32)
     }
 }
 
-impl std::ops::Neg for ModInt {
+impl<const M: i32> std::ops::Neg for ModInt<M> {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        let mut res = MOD - self.0;
-        if res >= MOD {
-            res -= MOD
+        let mut res = M - self.0;
+        if res >= M {
+            res -= M
         }
         Self(res)
     }

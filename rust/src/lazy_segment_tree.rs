@@ -41,7 +41,7 @@ where
         let m = (l + r) / 2;
         self.build(arr, ix * 2, l, m);
         self.build(arr, ix * 2 + 1, m, r);
-        self.data[ix].update(&self.updates[ix * 2 + 1], l, r);
+        self.data[ix] = T::combine(&self.data[2 * ix], &self.data[2 * ix + 1]);
     }
 
     fn push(&mut self, ix: usize, l: usize, r: usize) {

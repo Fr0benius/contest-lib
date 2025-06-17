@@ -17,6 +17,7 @@ fn solve<R: BufRead, W: Write>(sc: &mut Scanner<R>, wr: &mut W) {
 }
 
 use std::marker::PhantomData;
+
 macro_rules! recursive_function {
     ($name: ident, $trait: ident, ($($type: ident $arg: ident,)*)) => {
         pub trait $trait<$($type, )*Output> {
@@ -27,7 +28,7 @@ macro_rules! recursive_function {
         where
             F: FnMut(&mut dyn $trait<$($type, )*Output>, $($type, )*) -> Output,
         {
-            f: F,
+            f: std::cell::UnsafeCell<F>,
             $($arg: PhantomData<$type>,
             )*
             phantom_output: PhantomData<Output>,
@@ -39,7 +40,7 @@ macro_rules! recursive_function {
         {
             pub fn new(f: F) -> Self {
                 Self {
-                    f,
+                    f: std::cell::UnsafeCell::new(f),
                     $($arg: Default::default(),
                     )*
                     phantom_output: Default::default(),
@@ -52,9 +53,7 @@ macro_rules! recursive_function {
             F: FnMut(&mut dyn $trait<$($type, )*Output>, $($type, )*) -> Output,
         {
             fn call(&mut self, $($arg: $type,)*) -> Output {
-                let const_ptr = &self.f as *const F;
-                let mut_ptr = const_ptr as *mut F;
-                unsafe { (&mut *mut_ptr)(self, $($arg, )*) }
+                unsafe { (*self.f.get())(self, $($arg, )*) }
             }
         }
     }
@@ -70,7 +69,6 @@ recursive_function!(RecursiveFunction6, Callable6, (Arg1 arg1, Arg2 arg2, Arg3 a
 recursive_function!(RecursiveFunction7, Callable7, (Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7,));
 recursive_function!(RecursiveFunction8, Callable8, (Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8,));
 recursive_function!(RecursiveFunction9, Callable9, (Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5, Arg6 arg6, Arg7 arg7, Arg8 arg8, Arg9 arg9,));
-
 #[macro_export]
 macro_rules! dbg{
     ($($a:expr),*) => {

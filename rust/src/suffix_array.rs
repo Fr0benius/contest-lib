@@ -1,5 +1,3 @@
-use std::cmp::Ordering;
-
 pub struct SuffixArray {
     pub suffix: Vec<usize>,
     pub lcp: Vec<usize>,
@@ -31,9 +29,9 @@ impl SuffixArray {
             inv
         };
 
-        let comp = |i: usize, j: usize, gap: usize, inv: &[usize]| -> Ordering {
+        let comp = |i: usize, j: usize, gap: usize, inv: &[usize]| -> std::cmp::Ordering {
             match inv[i].cmp(&inv[j]) {
-                Ordering::Equal => {
+                std::cmp::Ordering::Equal => {
                     if i + gap >= n || j + gap >= n {
                         j.cmp(&i)
                     } else {
@@ -49,7 +47,7 @@ impl SuffixArray {
             sa.sort_unstable_by(|&i, &j| comp(i, j, gap, &inv));
             for i in 1..n {
                 temp[i] = temp[i - 1]
-                    + if comp(sa[i - 1], sa[i], gap, &inv) == Ordering::Less {
+                    + if comp(sa[i - 1], sa[i], gap, &inv) == std::cmp::Ordering::Less {
                         1
                     } else {
                         0

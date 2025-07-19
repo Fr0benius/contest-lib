@@ -30,23 +30,37 @@ impl<const M: i32> ModInt<M> {
     }
 }
 
+impl<const M: i32> std::ops::AddAssign for ModInt<M> {
+    fn add_assign(&mut self, rhs: Self) {
+        self.0 += rhs.0;
+        if self.0 >= M {
+            self.0 -= M;
+        }
+    }
+}
+
 impl<const M: i32> std::ops::Add for ModInt<M> {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        let mut res = self.0 + rhs.0;
-        if res >= M {
-            res -= M
-        }
-        Self(res)
+        let mut res = self;
+        res += rhs;
+        res
     }
 }
 
+impl<const M: i32> std::ops::MulAssign for ModInt<M> {
+    fn mul_assign(&mut self, rhs: Self) {
+        self.0 = ((self.0 as i64 * rhs.0 as i64) % M as i64) as i32
+    }
+}
 impl<const M: i32> std::ops::Mul for ModInt<M> {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Self(((self.0 as i64 * rhs.0 as i64) % M as i64) as i32)
+        let mut res = self;
+        res *= rhs;
+        res
     }
 }
 

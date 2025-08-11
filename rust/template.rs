@@ -81,16 +81,16 @@ macro_rules! dbg{
         {};
     }
 }
-struct Scanner<R> {
+pub struct Scanner<R> {
     reader: R,
     buf_str: Vec<u8>,
     buf_iter: str::SplitWhitespace<'static>,
 }
 impl<R: BufRead> Scanner<R> {
-    fn new(reader: R) -> Self {
+    pub fn new(reader: R) -> Self {
         Self { reader, buf_str: vec![], buf_iter: "".split_whitespace() }
     }
-    fn tok<T: str::FromStr>(&mut self) -> T {
+    pub fn tok<T: str::FromStr>(&mut self) -> T {
         loop {
             if let Some(token) = self.buf_iter.next() {
                 return token.parse().ok().expect("Failed parse");

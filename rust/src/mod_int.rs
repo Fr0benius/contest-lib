@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct ModInt<const M: i32>(i32);
 
 impl<const M: i32> ModInt<M> {

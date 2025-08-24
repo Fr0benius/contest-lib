@@ -1,13 +1,15 @@
-pub struct Fenwick {
-    a: Vec<i64>,
+pub struct Fenwick<T> {
+    a: Vec<T>,
 }
 
-impl Fenwick {
+impl<T: Copy + Default + std::ops::AddAssign> Fenwick<T> {
     pub fn new(n: usize) -> Self {
-        Self { a: vec![0; n + 1] }
+        Self {
+            a: vec![Default::default(); n + 1],
+        }
     }
 
-    pub fn update(&mut self, mut i: usize, v: i64) {
+    pub fn update(&mut self, mut i: usize, v: T) {
         i += 1;
         while i < self.a.len() {
             self.a[i] += v;
@@ -15,21 +17,23 @@ impl Fenwick {
         }
     }
 
-    pub fn query(&self, mut i: usize) -> i64 {
+    pub fn query(&self, mut i: usize) -> T {
         i = min(i, self.a.len() - 1);
-        let mut res = 0;
+        let mut res: T = Default::default();
         while i != 0 {
             res += self.a[i];
             i -= i & i.wrapping_neg();
         }
         res
     }
+}
 
+impl<T: Copy + Default + std::ops::SubAssign + PartialOrd> Fenwick<T> {
     /// Returns lowest k such that query(k) >= v.
     /// If no such k, returns n + 1.
     /// Only works if all elements are nonnegative.
-    pub fn lower_bound(&self, mut v: i64) -> usize {
-        if v <= 0 {
+    pub fn lower_bound(&self, mut v: T) -> usize {
+        if v <= Default::default() {
             return 0;
         }
         let n = self.a.len() - 1;

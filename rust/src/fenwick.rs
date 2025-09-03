@@ -49,3 +49,17 @@ impl<T: Copy + Default + std::ops::SubAssign + PartialOrd> Fenwick<T> {
         k + 1
     }
 }
+
+impl Fenwick<i64> {
+    /// Initialize with a constant array instead of 0.
+    /// This is O(n) which is faster than the naive O(nlogn)
+    /// Making this generic is annoying (no trait for "cast from usize exactly like the 'as'
+    /// keyword") so leaving it as i64.
+    pub fn const_array(n: usize, c: i64) -> Self {
+        let mut a = vec![Default::default(); n + 1];
+        for i in 1..=n {
+            a[i] = c * (i & i.wrapping_neg()) as i64;
+        }
+        Self { a }
+    }
+}

@@ -12,6 +12,9 @@ use std::collections::{BinaryHeap, HashMap, HashSet, VecDeque};
 use std::io::{self, prelude::*};
 use std::str;
 
+fn solve() {
+}
+
 fn read_line() -> String {
     let mut s = String::new();
     io::stdin().read_line(&mut s);
@@ -22,11 +25,12 @@ fn parse<T: std::str::FromStr>(s: &str) -> T {
     s.trim().parse().ok().expect("bad parse")
 }
 
-fn read_int() -> i64 {
+pub fn read_int() -> i64 {
     parse(&read_line())
 }
 
-fn solve() {
+pub fn read_ints() -> Vec<i64> {
+    read_line().split_ascii_whitespace().map(parse).collect()
 }
 
 use std::marker::PhantomData;

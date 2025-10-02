@@ -16,8 +16,6 @@ fn solve<R: BufRead, W: Write>(sc: &mut Scanner<R>, wr: &mut W) {
     
 }
 
-use std::marker::PhantomData;
-
 macro_rules! recursive_function {
     ($name: ident, $trait: ident, ($($type: ident $arg: ident,)*)) => {
         pub trait $trait<$($type, )*Output> {
@@ -29,9 +27,9 @@ macro_rules! recursive_function {
             F: FnMut(&mut dyn $trait<$($type, )*Output>, $($type, )*) -> Output,
         {
             f: std::cell::UnsafeCell<F>,
-            $($arg: PhantomData<$type>,
+            $($arg: std::marker::PhantomData<$type>,
             )*
-            phantom_output: PhantomData<Output>,
+            phantom_output: std::marker::PhantomData<Output>,
         }
 
         impl<F, $($type, )*Output> $name<F, $($type, )*Output>

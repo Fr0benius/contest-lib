@@ -43,40 +43,6 @@ pub fn mod_inv(mut a: i64, m: i64) -> i64 {
     }
 }
 
-/// Factorials mod m. Allows computing binomial coefficients.
-pub struct Factorials {
-    m: i64,
-    f: Vec<i64>,
-}
-
-impl Factorials {
-    pub fn new(m: i64, max: usize) -> Self {
-        let mut f = vec![0; max + 1];
-        f[0] = 1;
-        for k in 1..=max {
-            f[k] = f[k - 1] * k as i64 % m;
-        }
-        Self { m, f }
-    }
-
-    pub fn fac(&self, k: i64) -> i64 {
-        if k < 0 || k >= self.f.len() as i64 {
-            return 0;
-        }
-        self.f[k as usize]
-    }
-
-    pub fn choose(&self, n: i64, k: i64) -> i64 {
-        if k < 0 || k > n {
-            return 0;
-        }
-        let mut res = self.fac(n);
-        res = res * mod_inv(self.fac(k), self.m) % self.m;
-        res = res * mod_inv(self.fac(n - k), self.m) % self.m;
-        res
-    }
-}
-
 pub fn gcd(mut a: i64, mut b: i64) -> i64 {
     a = a.abs();
     b = b.abs();
